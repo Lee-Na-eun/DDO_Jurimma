@@ -71,12 +71,14 @@ body {
   background-image: linear-gradient(#5f1f86, #330952, #1e0530);
   background-attachment: fixed;
 }
-body::-webkit-scrollbar {
-  display: none; /* Chrome, Safari, Opera*/
+/* body::-webkit-scrollbar {
+  display: none;
   scroll-behavior: smooth;
-}
+} */
+/* 스크롤 y 부분 */
 
 .mainContent {
+  min-width: 280px;
   min-height: 467px;
   border: 1px solid transparent;
   box-sizing: border-box;
@@ -103,7 +105,12 @@ body::-webkit-scrollbar {
   #topBtn {
     width: 60px;
     height: 60px;
-    left: 86%;
+    left: 84%;
+  }
+}
+@media only screen and (max-width: 350px) {
+  #topBtn {
+    left: 80%;
   }
 }
 

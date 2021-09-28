@@ -202,6 +202,9 @@ const SearchMoreBox = styled.div`
           place-items: center;
           padding: 10px;
           box-sizing: border-box;
+          @media only screen and (max-width: 550px) {
+            font-size: 14px;
+          }
         }
         > .bottomWrap {
           display: flex;
@@ -396,14 +399,8 @@ function SearchMore() {
   useEffect(() => {
     if (state.userInfo.id === -1) {
       // 유저가 로그아웃 버튼을 누른 경우
-      swal({
-        title: '로그아웃이 완료되었습니다.',
-        text: '다음에 또 만나요! 🙋',
-        icon: 'success',
-      }).then(() => {
-        closeLogoutModal(false);
-        history.push('/main');
-      });
+      history.push('/main');
+      window.scrollTo(0, 0);
     } else {
       getMoreSearch(query);
       setIsEnd(true);

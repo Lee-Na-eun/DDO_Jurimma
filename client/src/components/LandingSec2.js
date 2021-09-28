@@ -5,6 +5,8 @@ import 'aos/dist/aos.css';
 import levelDia from '../images/LandingLevelDia.svg';
 import levelGold from '../images/LandingLevelGold.svg';
 import levelSilver from '../images/LandingLevelSilver.svg';
+import leverStairs from '../images/levelStair.png';
+import { useHistory } from 'react-router-dom';
 
 AOS.init();
 
@@ -15,17 +17,39 @@ const SectionWrap = styled.div`
 const Section2Box = styled.ul`
   width: 100%;
   > #firstLi {
-    margin-top: 80px;
+    margin-top: 0;
+    > #firstWrap {
+      @media only screen and (max-width: 1300px) {
+        margin-top: 50px;
+      }
+      @media only screen and (max-width: 400px) {
+        margin-top: 0;
+      }
+    }
   }
 `;
 
 const Section2Li = styled.li`
   width: 100%;
-  > #reverse {
+  > .reverse {
     text-align: right;
     @media only screen and (max-width: 1300px) {
       display: flex;
       flex-direction: column-reverse;
+    }
+    > .notbtn {
+      @media only screen and (max-width: 1300px) {
+        height: 400px;
+      }
+      @media only screen and (max-width: 700px) {
+        height: 350px;
+      }
+      @media only screen and (max-width: 400px) {
+        height: 300px;
+      }
+      @media screen and (max-width: 320px) {
+        height: 250px;
+      }
     }
   }
 `;
@@ -33,22 +57,23 @@ const Section2Li = styled.li`
 const DescriptWrap = styled.div`
   width: 1200px;
   display: flex;
-  align-items: center;
   margin: 0 auto;
-  margin-top: 200px;
+  margin-top: 400px;
   @media only screen and (max-width: 1300px) {
     width: 100%;
+    margin-top: 200px;
     display: block;
   }
-  @media only screen and (max-width: 600px) {
-    margin-top: 100px;
+  @media only screen and (max-width: 400px) {
+    margin-top: 150px;
   }
 `;
 
 const DescripTextBox = styled.div`
-  width: 500px;
-  height: 525px;
-  flex-direction: column;
+  width: 512px;
+  height: 387px;
+  display: flex;
+  align-items: center;
   float: left;
   @media only screen and (max-width: 1300px) {
     width: 500px;
@@ -56,15 +81,17 @@ const DescripTextBox = styled.div`
     float: none;
     margin: 0 auto;
   }
-  @media only screen and (max-width: 600px) {
-    width: 320px;
-    height: 470px;
+  @media only screen and (max-width: 700px) {
+    width: 100%;
+    height: 400px;
+  }
+  @media screen and (max-width: 320px) {
+    height: 300px;
   }
 `;
 
 const DescripText = styled.div`
   width: 100%;
-  height: 450px;
   @media only screen and (max-width: 1300px) {
     display: flex;
     flex-direction: column;
@@ -74,29 +101,47 @@ const DescripText = styled.div`
   > h3 {
     font-size: 45px;
     color: #fff;
-    padding: 40px 0;
+    padding: 5px 0;
     line-height: 60px;
     @media only screen and (max-width: 1300px) {
       text-align: center;
       font-size: 40px;
     }
 
-    @media only screen and (max-width: 600px) {
+    @media only screen and (max-width: 700px) {
       font-size: 30px;
       text-align: center;
+    }
+    @media screen and (max-width: 400px) {
+      font-size: 23px;
+      line-height: 40px;
+    }
+    @media screen and (max-width: 320px) {
+      font-size: 18px;
+      line-height: 30px;
     }
   }
   > p {
     font-size: 33px;
     line-height: 50px;
+    padding-top: 30px;
     color: #fff;
     @media only screen and (max-width: 1300px) {
       text-align: center;
       font-size: 28px;
     }
-    @media only screen and (max-width: 600px) {
+    @media only screen and (max-width: 700px) {
       font-size: 20px;
       text-align: center;
+    }
+    @media only screen and (max-width: 400px) {
+      text-align: center;
+      font-size: 17px;
+      padding-top: 10px;
+    }
+    @media screen and (max-width: 320px) {
+      font-size: 14px;
+      line-height: 30px;
     }
   }
   > button {
@@ -108,13 +153,18 @@ const DescripText = styled.div`
     color: #fff;
     transition: 0.3s;
     cursor: pointer;
-    margin-top: 50px;
+    margin-top: 30px;
     @media only screen and (max-width: 1300px) {
       width: 210px;
+      height: 50px;
     }
-    @media only screen and (max-width: 600px) {
+    @media only screen and (max-width: 700px) {
       width: 150px;
+      margin-top: 10px;
       height: 40px;
+    }
+    @media screen and (max-width: 320px) {
+      margin-top: 20px;
     }
   }
   > button:hover {
@@ -125,35 +175,43 @@ const DescripText = styled.div`
 `;
 
 const DescriptGif = styled.div`
-  width: 700px;
-  height: 525px;
-  background-color: #fff;
+  width: 688px;
+  height: 387px;
   border-radius: 40px;
   display: inline-block;
   @media only screen and (max-width: 1300px) {
     display: block;
-    width: 536px;
-    height: 402px;
+    width: 544px;
+    height: 306px;
     margin: 0 auto;
   }
-  @media only screen and (max-width: 600px) {
+  @media only screen and (max-width: 700px) {
     width: 320px;
-    height: 240px;
+    height: 180px;
     border-radius: 20px;
+  }
+  @media only screen and (max-width: 320px) {
+    width: 304px;
+    height: 171px;
+  }
+  @media only screen and (max-width: 280px) {
+    width: 256px;
+    height: 144px;
   }
 `;
 
 const LevelWrap = styled.div`
   width: 90%;
-  height: 800px;
   display: flex;
   align-items: center;
   margin: 0 auto;
-  margin-top: 100px;
+  margin-top: 400px;
 
-  @media only screen and (max-width: 600px) {
-    margin-top: 30px;
-    height: 600px;
+  @media only screen and (max-width: 1300px) {
+    margin-top: 250px;
+  }
+  @media only screen and (max-width: 400px) {
+    margin-top: 200px;
   }
 `;
 
@@ -164,36 +222,61 @@ const Levelup = styled.div`
     text-align: center;
     font-size: 45px;
     color: #fff;
+    padding-bottom: 30px;
     @media only screen and (max-width: 1300px) {
       font-size: 40px;
     }
-    @media screen and (max-width: 600px) {
-      font-size: 25px;
+    @media screen and (max-width: 700px) {
+      font-size: 30px;
+    }
+    @media screen and (max-width: 400px) {
+      font-size: 23px;
+      padding-bottom: 20px;
+    }
+    @media screen and (max-width: 320px) {
+      font-size: 18px;
     }
   }
   > p {
     text-align: center;
     color: #fff;
-    font-size: 25px;
-    padding: 20px 0;
+    font-size: 22px;
+    padding-top: 10px;
     @media only screen and (max-width: 1300px) {
       font-size: 18px;
     }
-    @media screen and (max-width: 479px) {
-      font-size: 15px;
+    @media screen and (max-width: 700px) {
+      font-size: 14px;
+    }
+    @media screen and (max-width: 400px) {
+      font-size: 10px;
+      padding-top: 0;
+    }
+    @media screen and (max-width: 280px) {
+      font-size: 8px;
     }
   }
-  > ul {
+  > #levelStairs {
     display: flex;
-    width: 100%;
+    width: 800px;
     height: 400px;
-    margin-top: 50px;
-    @media only screen and (max-width: 1300px) {
+    background: url(${leverStairs});
+    background-repeat: no-repeat;
+    background-size: cover;
+    margin: 0 auto;
+    margin-top: 30px;
+    @media only screen and (max-width: 900px) {
+      width: 600px;
       height: 300px;
     }
-    @media screen and (max-width: 600px) {
-      height: 200px;
+    @media screen and (max-width: 700px) {
+      width: 300px;
+      height: 150px;
       margin-top: 10px;
+    }
+    @media only screen and (max-width: 350px) {
+      width: 200px;
+      height: 100px;
     }
     > li {
       flex: 1 1 auto;
@@ -222,7 +305,7 @@ const Levelup = styled.div`
     color: #fff;
     font-size: 30px;
     text-align: center;
-    @media screen and (max-width: 600px) {
+    @media screen and (max-width: 700px) {
       font-size: 18px;
     }
   }
@@ -239,14 +322,23 @@ const LevelGif = styled.div`
     width: 536px;
     height: 402px;
   }
-  @media only screen and (max-width: 600px) {
+  @media only screen and (max-width: 700px) {
     width: 320px;
     height: 240px;
     border-radius: 20px;
   }
 `;
 
-function LandingSec2() {
+function LandingSec2({ location }) {
+  const history = useHistory();
+  const goToMain = () => {
+    history.push('/main');
+    window.scrollTo(0, 0);
+  };
+
+  const moveQuizSec = () => {
+    window.scrollTo({ top: 5200, behavior: 'smooth' });
+  };
   return (
     <SectionWrap>
       <Section2Box>
@@ -257,7 +349,7 @@ function LandingSec2() {
           data-aos-duration='2000'
           data-aos-offset='300'
         >
-          <DescriptWrap>
+          <DescriptWrap id='firstWrap'>
             <DescripTextBox>
               <DescripText>
                 <h3>
@@ -268,12 +360,20 @@ function LandingSec2() {
                   <br />
                   인기 검색단어 TOP 10도
                   <br />
-                  실시간으로 알아보자!
+                  실시간으로 알아보세요!
                 </p>
-                <button>바로가기</button>
+
+                <button onClick={goToMain}>메인으로 가기</button>
               </DescripText>
             </DescripTextBox>
-            <DescriptGif />
+            <DescriptGif
+              style={{
+                backgroundImage: `url(https://cdn.discordapp.com/attachments/892308009194258502/892308076118568960/landing1.gif)`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                boxShadow: '0px 0px 15px 0px ',
+              }}
+            />
           </DescriptWrap>
         </Section2Li>
         {/* 더보기 페이지 설명 */}
@@ -282,10 +382,17 @@ function LandingSec2() {
           data-aos-duration='2000'
           data-aos-offset='300'
         >
-          <DescriptWrap id='reverse'>
-            <DescriptGif />
-            <DescripTextBox id='descbox2'>
-              <DescripText id='desctext'>
+          <DescriptWrap className='reverse'>
+            <DescriptGif
+              style={{
+                backgroundImage: `url(https://cdn.discordapp.com/attachments/892308009194258502/892313202753437696/landing22.gif)`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                boxShadow: '0px 0px 20px 0px',
+              }}
+            />
+            <DescripTextBox className='notbtn'>
+              <DescripText className='desctext'>
                 <h3>
                   한 단어에 이렇게 많은 <br /> 뜻이 있다고?! 😯
                 </h3>
@@ -294,14 +401,13 @@ function LandingSec2() {
                   <br />
                   다양하게 찾아보고
                   <br />
-                  직접 뜻을 만들어서 공유해보자!
+                  직접 뜻을 만들어서 공유해보세요!
                 </p>
-                <button>바로가기</button>
               </DescripText>
             </DescripTextBox>
           </DescriptWrap>
         </Section2Li>
-        {/* 화면 크기에 따른 반응형 웹 페이지 설명 */}
+
         <Section2Li
           data-aos='fade-left'
           data-aos-duration='2000'
@@ -311,20 +417,60 @@ function LandingSec2() {
             <DescripTextBox>
               <DescripText>
                 <h3>
+                  매일 달라지는 오늘의 <br />
+                  퀴즈를 풀어보자! 💯
+                </h3>
+                <p>
+                  모두 맞추면 10exp, <br />
+                  하나를 맞추면 5exp를
+                  <br />
+                  획득할 수 있어요!
+                </p>
+
+                <button onClick={moveQuizSec}>웰컴퀴즈 풀기</button>
+              </DescripText>
+            </DescripTextBox>
+            <DescriptGif
+              style={{
+                backgroundImage: `url(https://media.discordapp.net/attachments/885202056355397686/892300356795658300/Quiz_Changed.gif?width=1098&height=549)`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                boxShadow: '0px 0px 20px 0px',
+              }}
+            />
+          </DescriptWrap>
+        </Section2Li>
+
+        {/* 화면 크기에 따른 반응형 웹 페이지 설명 */}
+        <Section2Li
+          data-aos='fade-right'
+          data-aos-duration='2000'
+          data-aos-offset='300'
+        >
+          <DescriptWrap className='reverse'>
+            <DescriptGif
+              style={{
+                backgroundImage: `url(https://cdn.discordapp.com/attachments/892308009194258502/892311601011630171/Artboard_1.png)`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                boxShadow: '0px 0px 20px 0px',
+              }}
+            />
+            <DescripTextBox className='notbtn'>
+              <DescripText className='desctext'>
+                <h3>
                   어디서든 즐길 수 있는
                   <br /> JURIMMA! 😎
                 </h3>
                 <p>
                   컴퓨터, 태블릿, 핸드폰등
                   <br />
-                  다양한 화면에서 지원가능!
+                  언제 어디서나
                   <br />
-                  <br />
-                  JURIMMA에 오신것을 환영합니다!
+                  다양한 화면에서 이용해보세요!
                 </p>
               </DescripText>
             </DescripTextBox>
-            <DescriptGif />
           </DescriptWrap>
         </Section2Li>
 
@@ -336,9 +482,15 @@ function LandingSec2() {
         >
           <LevelWrap>
             <Levelup>
-              <h3>꾸준한 활동으로 레벨업도 해보자! 👸</h3>
-              <p>퀴즈와 나만의 줄임말 뜻을 공유하면 경험치 획득 가능.</p>
-              <ul>
+              <h3>꾸준한 활동으로 레벨업 해보자! 👸</h3>
+              <p>
+                퀴즈도 풀고, 나만의 멋진 줄임말을 공유하여 경험치를 쌓아보세요.
+              </p>
+              <p>
+                새 글 작성시 5exp, 퀴즈를 도전시 최대 10exp를 획득할 수 있어요!
+              </p>
+              <div id='levelStairs'></div>
+              {/* <ul>
                 <li
                   id='silverLevel'
                   data-aos='fade-in'
@@ -350,7 +502,7 @@ function LandingSec2() {
                   data-aos-delay='1000'
                 ></li>
                 <li id='diaLevel' data-aos='fade-in' data-aos-delay='1500'></li>
-              </ul>
+              </ul> */}
             </Levelup>
           </LevelWrap>
         </Section2Li>
