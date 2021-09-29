@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import EditUserInfo from '../components/EditUserInfo';
 import EditUserPic from '../components/EditUserPic';
 import { useSelector } from 'react-redux';
-import { useEffect } from 'react/cjs/react.development';
+import { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 
 const MypageEditWrap = styled.div`
@@ -16,6 +16,9 @@ const MypageEditWrap = styled.div`
   margin-top: 150px;
   @media only screen and (max-width: 1399px) {
     width: 80vw;
+  }
+  @media only screen and (max-width: 400px) {
+    margin-top: 40px;
   }
 `;
 

@@ -3,8 +3,9 @@ import styled from 'styled-components';
 import { useState } from 'react';
 import you_quiz from '../images/you_quiz.svg';
 import AOS from 'aos';
+import swal from 'sweetalert';
 import 'aos/dist/aos.css';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setLoginOrSignupModal } from '../actions/index';
 AOS.init();
 
@@ -223,6 +224,7 @@ function LandingQuiz() {
     },
   ]; // 문제
   const dispatch = useDispatch();
+  const userInfoState = useSelector((state) => state.userInfoReducer);
   const [currentQuestion, setCurrentQuestion] = useState(0); // 현재 문제 index
   const [showScore, setShowScore] = useState(false); // 점수 화면 보임 여부
   const [score, setScore] = useState(-1); // 점수 카운트
@@ -242,7 +244,14 @@ function LandingQuiz() {
   };
 
   const openLoginOrSignupModal = (isOpen) => {
-    dispatch(setLoginOrSignupModal(isOpen));
+    if (!userInfoState.isLogin) {
+      dispatch(setLoginOrSignupModal(isOpen));
+    } else {
+      swal({
+        title: '이미 로그인 된 상태입니다.',
+        icon: 'warning',
+      });
+    }
   };
 
   return (

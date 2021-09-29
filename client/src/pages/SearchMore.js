@@ -5,16 +5,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   setNewContentModal,
   setLogout,
-  setLogoutModal,
   setAccessToken,
 } from '../actions/index';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { faThumbsUp } from '@fortawesome/free-solid-svg-icons';
 import exProfileImg from '../images/basic_profileImg.svg';
-import { useEffect } from 'react/cjs/react.development';
 import axios from 'axios';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import '../loadingCss.css';
 import swal from 'sweetalert';
 axios.defaults.withCredentials = true;
@@ -322,10 +320,6 @@ function SearchMore() {
       setOrderBy('byUpdatedAt');
     }
   };
-
-  const closeLogoutModal = (isOpen) => {
-    dispatch(setLogoutModal(isOpen));
-  }; // 로그인 모달 닫는 함수
 
   const openNewContentModal = (isOpen) => {
     dispatch(setNewContentModal(isOpen));
