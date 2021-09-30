@@ -23,7 +23,6 @@ function Mypage() {
   const history = useHistory();
   const userInfoState = useSelector((state) => state.userInfoReducer);
   const userModalState = useSelector((state) => state.userModalReducer);
-  const userContentState = useSelector((state) => state.userContentReducer);
   const dispatch = useDispatch();
   const url = process.env.REACT_APP_API_URL || `http://localhost:4000`;
   // /mypage로 들어가면 갖고있던 state로 userInfo 렌더해서 보여주기, userContent는 axios 요청하기(들어올때 한번만) + userContentReducer 업데이트
@@ -34,9 +33,7 @@ function Mypage() {
     userEditWordMean: '',
   }); // edit모달에 보여질 유저가 작성한 내용 나타낼 state
 
-  const [userContentsLength, setUserContentsLength] = useState(
-    userContentState.data.length
-  );
+  const [stateCheck, setStateCheck] = useState(false);
 
   useEffect(() => {
     if (userInfoState.userInfo.id === -1) {
@@ -50,11 +47,12 @@ function Mypage() {
   useEffect(() => {
     if (
       userModalState.isShowEditContentModal === false ||
-      userContentsLength !== userContentState.data.length
+      stateCheck === true
     ) {
       getMyContent();
+      setStateCheck(false);
     }
-  }, [userModalState.isShowEditContentModal, userContentsLength]); // 모달 여부가 false일때만 user 유저가 쓴 글 요청 -> 맨 처음 + 한번 켜서 수정하고 돌아왔을때?
+  }, [userModalState.isShowEditContentModal, stateCheck]); // 모달 여부가 false일때만 user 유저가 쓴 글 요청 -> 맨 처음 + 한번 켜서 수정하고 돌아왔을때?
 
   const getMyContent = async () => {
     try {
@@ -134,10 +132,7 @@ function Mypage() {
       ) : null}
       <MypageWrap>
         <UserInfo />
-        <UserContents
-          setEditInfo={setEditInfo}
-          setUserContentsLength={setUserContentsLength}
-        />
+        <UserContents setEditInfo={setEditInfo} setStateCheck={setStateCheck} />
       </MypageWrap>
     </>
   );
