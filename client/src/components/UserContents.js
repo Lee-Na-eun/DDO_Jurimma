@@ -5,8 +5,7 @@ import { setEditContentModal, getContent } from '../actions/index';
 import { setAccessToken, setLogout } from '../actions/index';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faThumbsUp } from '@fortawesome/free-solid-svg-icons';
-import { useState } from 'react';
-import nothing from '../images/nothing.svg';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import swal from 'sweetalert';
 axios.defaults.withCredentials = true;
@@ -167,6 +166,7 @@ const EditContent = styled.div`
     font-size: 12px;
     cursor: pointer;
     transition: 0.3s;
+    background-color: #fff;
     @media only screen and (max-width: 550px) {
       width: 47px;
     }
@@ -222,32 +222,89 @@ const HoverThumbsup = styled.span`
   display: none;
 `;
 
-function UserContents({ setEditInfo, setStateCheck }) {
+function UserContents({ setEditInfo, setStateCheck, stateCheck }) {
   const url = process.env.REACT_APP_API_URL || `http://localhost:4000`;
   const dispatch = useDispatch();
   const userInfoState = useSelector((state) => state.userInfoReducer);
+  const userModalState = useSelector((state) => state.userModalReducer);
   const userContentState = useSelector((state) => state.userContentReducer);
   const [orderBy, setOrderBy] = useState('byUpdatedAt');
+  const [myContentData, setmyContentData] = useState([]); // 보여질 데이터
+  const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingContent, setIsLoadingContent] = useState(false);
+  const [fetching, setFetching] = useState(false); // 추가 데이터를 로드하는지 아닌지를 담기위한 state
+  const [isEnd, setIsEnd] = useState(true);
+
+  // 스크롤 이벤트 핸들러
+  const handleScroll = () => {
+    const scrollHeight = document.documentElement.scrollHeight;
+    const scrollTop = document.documentElement.scrollTop;
+    const clientHeight = document.documentElement.clientHeight;
+    if (
+      scrollTop + clientHeight >= scrollHeight &&
+      fetching === false &&
+      isEnd === true
+    ) {
+      // 페이지 끝에 도달하면 추가 데이터를 받아온다
+      setIsLoadingContent(false);
+      axiosMyContent();
+      setIsLoadingContent(true);
+    } else if (isEnd === false && isLoadingContent === true) {
+      setIsLoadingContent(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  });
+
+  const axiosMyContent = async () => {
+    setFetching(true);
+
+    setmyContentData([
+      ...myContentData,
+      { id: 0, createdAt: 'T', thumbsup: [] },
+    ]);
+
+    let getResult = await axios.get(
+      `${url}/meaning/me?offset=${myContentData.length}&limit=3&sort=${orderBy}`,
+      {
+        headers: { authorization: `Bearer ${userInfoState.accessToken}` },
+      }
+    );
+    if (getResult.data.accessToken) {
+      dispatch(setAccessToken(getResult.data.accessToken));
+    }
+    if (getResult.data.data.length === 0) {
+      const loadedData = myContentData.slice();
+      loadedData.push({ id: 'done', createdAt: 'T', thumbsup: [] });
+      setmyContentData(loadedData);
+      setIsEnd(false);
+    } else {
+      setmyContentData([...myContentData, ...getResult.data.data]);
+    }
+    setFetching(false);
+  };
+
+  useEffect(() => {
+    if (stateCheck === true) {
+      getMyContent();
+      setStateCheck(false);
+      setIsEnd(true);
+      window.scrollTo(0, 600);
+    }
+  }, [stateCheck]);
 
   const ordering = (value) => {
     if (value === 'byThumbsup') {
       setOrderBy('byThumbsup');
-      dispatch(
-        getContent(
-          userContentState.data.sort(
-            (a, b) => b.thumbsup.length - a.thumbsup.length
-          )
-        )
-      );
+      setStateCheck(true);
     } else {
       setOrderBy('byUpdatedAt');
-      dispatch(
-        getContent(
-          userContentState.data.sort(
-            (a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)
-          )
-        )
-      );
+      setStateCheck(true);
     }
   };
 
@@ -283,7 +340,6 @@ function UserContents({ setEditInfo, setStateCheck }) {
             icon: 'success',
           }).then(() => {
             setStateCheck(true);
-            setOrderBy('byUpdatedAt');
           });
         } catch (error) {
           if (error.response.data.message === 'Send new Login Request') {
@@ -312,6 +368,42 @@ function UserContents({ setEditInfo, setStateCheck }) {
     });
   };
 
+  const getMyContent = async () => {
+    try {
+      let contentResult = await axios.get(
+        `${url}/meaning/me?offset=0&limit=3&sort=${orderBy}`,
+        {
+          headers: { authorization: `Bearer ${userInfoState.accessToken}` },
+        }
+      );
+      if (contentResult.data.accessToken) {
+        dispatch(setAccessToken(contentResult.data.accessToken));
+      }
+      setmyContentData([...contentResult.data.data]);
+      setIsLoading(true);
+    } catch (error) {
+      if (error.response.data.message === 'Send new Login Request') {
+        swal({
+          title: '로그인이 필요합니다.',
+          text: '로그인이 만료되었습니다.',
+          icon: 'warning',
+        }).then(() => {
+          dispatch(setLogout());
+          window.location.replace('/');
+        });
+      } else {
+        swal({
+          title: 'Internal Server Error',
+          text: '죄송합니다. 다시 로그인해주세요.',
+          icon: 'warning',
+        }).then(() => {
+          dispatch(setLogout());
+          window.location.replace('/');
+        });
+      }
+    }
+  }; // axios로 유저가 쓴 글 요청 및 dispatch로 redux 업데이트
+
   return (
     <UserContentsWrap>
       <FilterWrap>
@@ -322,25 +414,45 @@ function UserContents({ setEditInfo, setStateCheck }) {
       </FilterWrap>
 
       <ul>
-        {userContentState.data.length > 0 ? (
-          <>
-            {userContentState.data.map((el, idx) => {
+        {isLoading || myContentData.length > 0 ? (
+          myContentData.map((data, idx) => {
+            if (data.id === 0) {
               return (
-                <li className='wordBox' key={idx}>
+                <li className='wordBox' key={data.id}>
+                  <div className='wordBoxWrap'>
+                    <div className='topWrap'></div>
+                    <div className='lds-dual-ring'></div>
+                  </div>
+                </li>
+              );
+            } else if (data.id === 'done') {
+              return (
+                <li className='wordBox' key={data.id}>
+                  <div className='wordBoxWrap'>
+                    <div className='topWrap'></div>
+                    <div className='wordMean' style={{ fontWeight: 'bold' }}>
+                      줄임말을 전부 가져왔습니다! 😁
+                    </div>
+                  </div>
+                </li>
+              );
+            } else {
+              return (
+                <li className='wordBox' key={data.id}>
                   <div className='wordBoxWrap'>
                     <div className='topWrap'>
-                      <h3>{el.wordName}</h3>
+                      <h3>{data.wordName}</h3>
                       <EditContent>
-                        <button onClick={() => deleteContent(el.id)}>
+                        <button onClick={() => deleteContent(data.id)}>
                           삭제하기
                         </button>
                         <button
                           onClick={() =>
                             openEditContentModal(
                               true,
-                              el.id,
-                              el.wordName,
-                              el.wordMean
+                              data.id,
+                              data.wordName,
+                              data.wordMean
                             )
                           }
                         >
@@ -349,35 +461,36 @@ function UserContents({ setEditInfo, setStateCheck }) {
                       </EditContent>
                     </div>
 
-                    <div className='wordMean'>{el.wordMean}</div>
+                    <div className='wordMean'>{data.wordMean}</div>
 
                     <div className='bottomWrap'>
-                      <span>{el.updatedAt.split('T')[0]}</span>
+                      <span>{data.updatedAt.split('T')[0]}</span>
                       <div className='hoverThumbsWrap'>
                         <HoverThumbsup className='hoverThumbsup'>
-                          {el.thumbsup.length === 0
+                          {data.thumbsup.length === 0
                             ? `아직 좋아한 사람이
                               없습니다.`
-                            : `${el.thumbsup[0]}님 외
-                              ${el.thumbsup.length - 1}
+                            : `${data.thumbsup[0]}님 외
+                              ${data.thumbsup.length - 1}
                               명이 좋아합니다.`}
                         </HoverThumbsup>
                         <div className='thumbsupWrap'>
                           <FontAwesomeIcon icon={faThumbsUp} />
-                          &nbsp;&nbsp;{el.thumbsup.length}개
+                          &nbsp;&nbsp;{data.thumbsup.length}개
                         </div>
                       </div>
                     </div>
                   </div>
                 </li>
               );
-            })}
-          </>
+            }
+          })
         ) : (
-          <li className='noContent'>
-            <img src={nothing} />
-            아직 작성된 글이 없습니다.
-          </li>
+          <ul>
+            <li className='wordBox'>
+              <div className='lds-dual-ring'></div>
+            </li>
+          </ul>
         )}
       </ul>
     </UserContentsWrap>
