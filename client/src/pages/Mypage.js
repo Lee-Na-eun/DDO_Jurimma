@@ -7,7 +7,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useState, useEffect } from 'react';
 import swal from 'sweetalert';
 import axios from 'axios';
-import { setAccessToken, setUserInfo, setLogout, getContent } from '../actions';
+import { setAccessToken, setUserInfo, setLogout } from '../actions';
 import EditContent from '../modals/EditContent';
 axios.defaults.withCredentials = true;
 
@@ -31,6 +31,7 @@ function Mypage() {
     userEditWordMean: '',
   }); // edit모달에 보여질 유저가 작성한 내용 나타낼 state
   const [stateCheck, setStateCheck] = useState(false);
+  const [editAndDelState, setEditAndDelState] = useState(false);
 
   useEffect(() => {
     if (userInfoState.userInfo.id === -1) {
@@ -83,7 +84,9 @@ function Mypage() {
           id={editInfo.userEditId}
           wordName={editInfo.userEditWordName}
           wordMean={editInfo.userEditWordMean}
+          stateCheck={stateCheck}
           setStateCheck={setStateCheck}
+          setEditAndDelState={setEditAndDelState}
         />
       ) : null}
       <MypageWrap>
@@ -92,6 +95,8 @@ function Mypage() {
           setEditInfo={setEditInfo}
           stateCheck={stateCheck}
           setStateCheck={setStateCheck}
+          editAndDelState={editAndDelState}
+          setEditAndDelState={setEditAndDelState}
         />
       </MypageWrap>
     </>
