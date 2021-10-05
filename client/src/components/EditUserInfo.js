@@ -282,8 +282,8 @@ function EditUserInfo() {
         });
       } else {
         const editRes = await axios({
-          url: `${url}/user`,
-          method: 'patch',
+          url: `${url}/user/${state.userInfo.id}`,
+          method: 'put',
           headers: { authorization: `Bearer ${state.accessToken}` },
           data: editUser,
         });
@@ -299,7 +299,6 @@ function EditUserInfo() {
           headers: { authorization: `Bearer ${state.accessToken}` },
         });
         dispatch(setLogout());
-        history.push('/');
       }
     } catch (error) {
       if (error.response.data.message === 'Wrong Password') {
@@ -351,8 +350,11 @@ function EditUserInfo() {
         {state.userInfo.isOAuth ? (
           <>
             <OldUserName style={{ backgroundImage: whatColor }}>
-              {state.userInfo.username}
-              <span>님, 수정을 원하시나요?</span>
+              {state.userInfo.username.length > 10
+                ? `${state.userInfo.username.slice(0, 10)}...님`
+                : `${state.userInfo.username}님`}
+              &nbsp;
+              <span>수정을 원하시나요?</span>
             </OldUserName>
             <div id='nothingImg'></div>
             <div id='letter'>
@@ -362,8 +364,11 @@ function EditUserInfo() {
         ) : (
           <>
             <OldUserName style={{ backgroundImage: whatColor }}>
-              {state.userInfo.username}
-              <span>님, 수정을 원하시나요?</span>
+              {state.userInfo.username.length > 10
+                ? `${state.userInfo.username.slice(0, 10)}...님`
+                : `${state.userInfo.username}님`}
+              &nbsp;
+              <span>수정을 원하시나요?</span>
             </OldUserName>
             <input
               type='text'
