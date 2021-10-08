@@ -9,7 +9,6 @@ import { useSelector } from 'react-redux';
 import silverBadge from '../images/junior_badge.svg';
 import goldBadge from '../images/senior_badge.svg';
 import diaBadge from '../images/master_badge.svg';
-import { useSpeechRecognition } from 'react-speech-kit';
 
 const HeaderKeyFrame = keyframes`
     0% {
@@ -124,6 +123,11 @@ const SearchBox = styled.div`
   > input:focus::-webkit-input-placeholder {
     color: transparent;
   }
+  > input::placeholder {
+    @media only screen and (max-width: 320px) {
+      font-size: 11px;
+    }
+  }
   > #buttonWrap {
     flex: 1 1 auto;
     display: flex;
@@ -160,7 +164,15 @@ const InputBox = styled.div`
   }
 `;
 
-function SearchInputWrap({ autoCompResult, setWord, word, searchWord }) {
+function SearchInputWrap({
+  autoCompResult,
+  setWord,
+  word,
+  searchWord,
+  listen,
+  listening,
+  stop,
+}) {
   const state = useSelector((state) => state.userInfoReducer);
   const [isShowAutoComp, setIsShowAutoComp] = useState(false);
   const [selected, setSelected] = useState(-1);
@@ -170,6 +182,7 @@ function SearchInputWrap({ autoCompResult, setWord, word, searchWord }) {
       setIsShowAutoComp(false);
     } else {
       setIsShowAutoComp(true);
+      setSelected(-1);
     }
   }, [word]);
 
@@ -212,13 +225,6 @@ function SearchInputWrap({ autoCompResult, setWord, word, searchWord }) {
     }
   };
 
-  const { listen, listening, stop } = useSpeechRecognition({
-    onResult: (result) => {
-      // 음성인식 결과가 value 상태값으로 할당됩니다.
-      setWord(result);
-    },
-  });
-
   let loginColorBox;
   let levelBadge;
   let levelWidth;
@@ -254,7 +260,7 @@ function SearchInputWrap({ autoCompResult, setWord, word, searchWord }) {
   }
 
   return (
-    <SearchInputBox>
+    <SearchInputBox onMouseDown={stop}>
       <div
         id='levelBadge'
         style={{
