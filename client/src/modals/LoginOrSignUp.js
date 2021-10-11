@@ -15,6 +15,7 @@ import { fab } from '@fortawesome/free-brands-svg-icons';
 import { faComment } from '@fortawesome/free-solid-svg-icons';
 import swal from 'sweetalert';
 import axios from 'axios';
+import cryptojs from 'crypto-js';
 import '../loadingCss.css';
 library.add(fab, faComment);
 axios.defaults.withCredentials = true;
@@ -209,7 +210,7 @@ function LoginOrSignUp() {
   const closeLoginOrSignupModal = (isOpen) => {
     dispatch(setLoginOrSignupModal(isOpen));
   };
-  const [isLoading, setIsLoading] = useState(false); // 회원가입 진행 상태
+  const [isLoading, setIsLoading] = useState(false);
   const [loginInfo, setLoginInfo] = useState({
     loginEmail: '',
     loginPassword: '',
@@ -258,16 +259,23 @@ function LoginOrSignUp() {
       ) {
         setErrorMsg('유효하지 않은 비밀번호 입니다.');
       } else {
-        setErrorMsg(''); // 에러메세지 리셋
+        setErrorMsg('');
+        setIsLoading(true);
+        const secretKey = `${process.env.REACT_APP_CRYPTOJS_SECRET}`;
+        const encryptedPwd = cryptojs.AES.encrypt(
+          loginInfo.loginPassword,
+          secretKey
+        ).toString();
         let result = await axios.post(`${url}/user/login`, {
           email: loginInfo.loginEmail,
-          password: loginInfo.loginPassword,
+          password: encryptedPwd,
         });
 
-        dispatch(setLogin(true)); // axios응답으로 redux 업데이트
-        dispatch(setAccessToken(result.data.accessToken)); // axios 응답으로 accessToken 업데이트
-        dispatch(setUserInfo(result.data.userInfo)); // axios응답으로 userInfo 업데이트
+        dispatch(setLogin(true));
+        dispatch(setAccessToken(result.data.accessToken));
+        dispatch(setUserInfo(result.data.userInfo));
 
+        setIsLoading(false);
         swal({
           title: '로그인이 완료되었습니다!',
           text: '만반잘부 😆 (만나서 반갑고 잘 부탁해)!',
@@ -283,18 +291,32 @@ function LoginOrSignUp() {
           text: '이메일과 비밀번호를 다시 한번 확인해주세요!',
           icon: 'warning',
         });
+        setIsLoading(false);
+        setErrorMsg('유저 정보가 없습니다.');
       } else if (error.response.data.message === 'Not Authorized Email') {
         swal({
           title: '로그인에 실패하였습니다',
           text: '이메일 인증이 완료되지 않았습니다. 다시 한번 확인해주세요!',
           icon: 'warning',
         });
+        setIsLoading(false);
+        setErrorMsg('이메일 인증이 완료되지 않았습니다.');
+      } else if (error.response.data.message === 'You Already Signed up') {
+        swal({
+          title: '이미 JURIMMA 회원이시네요!',
+          text: '카카오 또는 구글 로그인으로 다시 시도해주세요. ',
+          icon: 'warning',
+        });
+        setIsLoading(false);
+        setErrorMsg('이미 JURIMMA 회원입니다.');
       } else {
         swal({
           title: 'Internal Server Error',
           text: '죄송합니다. 다시 로그인해주세요.',
           icon: 'warning',
         });
+        setIsLoading(false);
+        setErrorMsg('다시 로그인해주세요.');
       }
     }
   };
@@ -323,11 +345,16 @@ function LoginOrSignUp() {
       } else {
         setErrorMsg('');
         setIsLoading(true);
+        const secretKey = `${process.env.REACT_APP_CRYPTOJS_SECRET}`;
+        const encryptedPwd = cryptojs.AES.encrypt(
+          signupInfo.signupPassword,
+          secretKey
+        ).toString();
         await axios.get(`${url}/user/${signupInfo.signupEmail}/check`);
         await axios.post(`${url}/user/signup`, {
           username: signupInfo.signupUsername,
           email: signupInfo.signupEmail,
-          password: signupInfo.signupPassword,
+          password: encryptedPwd,
         });
         setIsLoading(false);
         swal({
@@ -345,8 +372,8 @@ function LoginOrSignUp() {
           text: '이미 가입된 사용자입니다. 이메일 정보를 다시 한번 확인해주세요!',
           icon: 'error',
         });
-        setErrorMsg('이미 가입된 사용자입니다.');
         setIsLoading(false);
+        setErrorMsg('이미 가입된 사용자입니다.');
       } else {
         swal({
           title: 'Internal Server Error',
@@ -445,7 +472,13 @@ function LoginOrSignUp() {
                   />
                 </form>
                 <ErrorMsg>{errorMsg}</ErrorMsg>
-                <button onClick={handleLogin}>로그인 하기</button>
+                {isLoading ? (
+                  <div id='loadingIndicator'>
+                    <div className='lds-dual-ring'></div>
+                  </div>
+                ) : (
+                  <button onClick={handleLogin}>로그인 하기</button>
+                )}
               </div>
             ) : (
               <div className='tabContentWrap'>

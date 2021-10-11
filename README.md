@@ -33,7 +33,7 @@ _" 아만보, 오저치고, 알잘딱깔센 ..._ <br>_이게 도대체 무슨 �
 
 # 💻 **Tech Stack**
 
-<img width="700" alt="DDO_Jurimma Stack" src="https://media.discordapp.net/attachments/878131722296918017/892270332168269864/cf.png?width=858&height=549">
+<img width="700" alt="DDO_Jurimma Stack" src="https://cdn.discordapp.com/attachments/880435687357300747/896794678895214592/unknown.png">
 
 <br>
 <br>
@@ -108,8 +108,6 @@ _" 아만보, 오저치고, 알잘딱깔센 ..._ <br>_이게 도대체 무슨 �
 #### ✨ **프로필 사진 테두리 / 줄임말 검색 영역 테두리**
 
 ![레벨별 UI.png](https://media.discordapp.net/attachments/885202056355397686/892438871411933204/unknown.png)
-
-![레벨별 UI.gif](https://media.discordapp.net/attachments/878131406176403479/895885853455433728/levelchangeeee.gif)
 
 <br>
 
